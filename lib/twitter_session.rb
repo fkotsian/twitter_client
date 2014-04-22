@@ -16,11 +16,11 @@ class TwitterSession
   end
 
   def self.post(path, req_params)
-    access_token = self.access_token
+    @access_token = TwitterSession.access_token
 
     url = self.path_to_url(path)
 
-    raw_data = @access_token.post(url, req_params)
+    raw_data = @access_token.post(url, req_params).body
     # parsed_data = JSON.parse(raw_data)
   end
 
@@ -58,10 +58,11 @@ class TwitterSession
     # `Addressable::URI` to build the full URL from just the
     # meaningful part of the path (`statuses/user_timeline`)
     Addressable::URI.new(
-    :scheme => "https",
-    :host => "api.twitter.com",
-    :path => '1.1/' + path.to_s + '.json',
-    :query_values => query_values ).to_s
+      :scheme => "https",
+      :host => "api.twitter.com",
+      :path => '1.1/' + path.to_s + '.json',
+      :query_values => query_values )
+    .to_s
   end
 end
 
