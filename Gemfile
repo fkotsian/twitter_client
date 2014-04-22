@@ -32,6 +32,14 @@ group :doc do
   gem 'sdoc', require: false
 end
 
+gem 'oauth'
+gem 'addressable'
+gem 'rest-client'
+gem 'json'
+gem 'launchy'
+
+
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
