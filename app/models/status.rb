@@ -1,12 +1,26 @@
 require 'open-uri'
+require 'user'
 
 class Status < ActiveRecord::Base
+  belongs_to( :user,
+              class_name: "User",
+              foreign_key: :twitter_user_id,
+              primary_key: :id )
+
   validates :body, :twitter_status_id, :twitter_user_id, presence: true
   validates :twitter_status_id, uniqueness: true
 
   def self.fetch_by_twitter_user_id!(twitter_user_id)
-    TwitterSession.get("statuses/user_timeline",
-                      { :user_id => twitter_user_id }  )
+    p twitter_user_id
+
+    unparsed_statuses = TwitterSession.get("statuses/user_timeline",
+                      :user_id => twitter_user_id )
+
+    parsed_statuses = Status.parse_json(unparsed_statuses)
+
+    p parsed_statuses
+
+    Status.where(:twitter_user_id => twitter_user_id)
   end
 
   def self.post(body)
@@ -43,6 +57,8 @@ class Status < ActiveRecord::Base
       :twitter_status_id => tweet_id,
       :twitter_user_id => user_id)
     end
+
+    p statuses
 
     old_ids = Status.pluck(:twitter_status_id)
 

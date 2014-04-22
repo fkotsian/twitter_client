@@ -1,7 +1,17 @@
+require 'status'
+
 class User < ActiveRecord::Base
+  has_many( :statuses,
+            class_name: "Status",
+            foreign_key: :twitter_user_id,
+            primary_key: :id )
 
   validates :screen_name, presence: true, uniqueness: true
   validates :twitter_user_id, presence: true, uniqueness: true
+
+  def fetch_statuses!
+    Status.fetch_by_twitter_user_id!(self.twitter_user_id)
+  end
 
   def self.fetch_by_screen_name!(screen_name)
     unparsed_user_json = TwitterSession.get("users/show",
